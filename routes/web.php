@@ -19,7 +19,24 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-Route::get('test', function(){
-    return 'test';
+Route::get('/user/{id}', function($id){
+    return 'User '.$id;
 });
+
+Route::get('/user/{name?}', function($name=null){
+    return 'User '.$name;
+});
+
+Route::get('/home', function(){
+    return 'Not Allowed';
+});
+
+Route::get('/check', function(){
+    return "Allowed";
+})->middleware('check.age');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/users', 'UserController@index')->name('users');
+Route::resource('/users', 'UserController');
