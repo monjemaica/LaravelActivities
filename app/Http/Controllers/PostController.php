@@ -14,8 +14,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $json_array = Post::all();
-        $posts = json_decode($json_array, true);
+        $posts = Post::get();
         return view('posts.index', compact('posts'));
     }
 
@@ -53,6 +52,8 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        // $post = Post::find($id);
+        //select * from users where id = $id
         return view('posts.show', compact('post'));
     }
 
@@ -76,15 +77,12 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        $request->validate([
-            'Title' => 'required',
-            'Description' => 'required',
-        ]);
+        // $post = Post::find($id);
+        $post->Title = $request->Title;
+        $post->Description = $request->Description;
+        $post->save();
 
-        $post->update($request->all());
-  
-        return redirect()->route('posts.index')
-                        ->with('success','Post updated successfully');
+        return redirect('/posts');
     }
 
     /**
@@ -95,9 +93,9 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        // $post = Post::find($id);
         $post->delete();
-  
-        return redirect()->route('posts.index')
-                        ->with('success','Post deleted successfully');
+
+        return redirect('/posts');
     }
 }
