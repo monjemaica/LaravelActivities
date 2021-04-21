@@ -34,11 +34,33 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Post $post)
     {
-        $post = new Post();
-        $post->title = $request->title;
-        $post->description = $request->description;
+        $request->validate([
+            'Title' => 'required|unique:posts|max:255',
+            'Description' => 'required',
+        ]);
+
+        if ($request->hasFile('img')) {
+            // Get filename with the extension
+            $filenameWithExt = $request->file('img')->getClientOriginalName();
+            // Get just filename
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            // Get just ext
+            $extension = $request->file('img')->getClientOriginalExtension();
+            // Filename to store
+            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+            //Upload Image
+            // $path = $request->file('image')->move(public_path('/residents'), $fileNameToStore);
+            $path = $request->file('img')->storeAs('public/img', $fileNameToStore);
+            // $path = $request->file('image')->move(base_path('public_html/residents'), $fileNameToStore);
+        } else {
+            $fileNameToStore = 'noimage.png';
+        }
+
+        $post->Title = $request->Title;
+        $post->Description = $request->Description;
+        $post->img = $fileNameToStore;
         $post->save();
 
         return redirect('/posts');
