@@ -13,8 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
+
+Auth::routes();
+
+Route::get('/home', function () {
+    return redirect('/posts');
 });
 
 Auth::routes();
@@ -27,9 +31,6 @@ Route::get('/user/{name?}', function ($name = null) {
     return 'User ' . $name;
 });
 
-Route::get('/home', function () {
-    return 'Not Allowed';
-});
 
 Route::get('/check', function () {
     return "Allowed";
@@ -37,6 +38,6 @@ Route::get('/check', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
 Route::resource('/users', 'UserController');
 Route::resource('/posts', 'PostController');
+Route::resource('/comments', 'CommentController');
